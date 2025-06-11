@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lusi, Amar Kotha Shono</title>
+  <style>
+    body {
+      margin: 0;
+      background: linear-gradient(to bottom right, #ffe9ec, #e6f7ff);
+      font-family: 'Segoe UI', sans-serif;
+      color: #333;
+      overflow: hidden;
+    }
+    .start-screen {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.9);
+      z-index: 10;
+      flex-direction: column;
+      text-align: center;
+    }
+    .start-button {
+      font-size: 1.5rem;
+      padding: 12px 30px;
+      background-color: #ff88a1;
+      color: white;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      margin-top: 20px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    .container {
+      opacity: 0;
+      transition: opacity 2s;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      padding: 20px;
+      text-align: center;
+    }
+    .container.visible {
+      opacity: 1;
+      z-index: 11;
+    }
+    .message {
+      font-size: 1.2rem;
+      line-height: 1.8;
+      white-space: pre-line;
+      max-width: 90%;
+    }
+    .heart {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      font-size: 1.5rem;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="start-screen" id="start-screen">
+    <h1>Tap to Begin 💖</h1>
+    <button class="start-button" onclick="begin()">Start</button>
+  </div>
+
+  <audio id="bgm" loop autoplay muted>
+    <source src="music.mp3" type="audio/mpeg" />
+    Your browser does not support the audio tag.
+  </audio>
+
+  <canvas id="dust"></canvas>
+
+  <div class="container" id="main-container">
+    <div class="message" id="message"></div>
+    <div class="heart">❤️</div>
+  </div>
+
+  <script>
+    const text = `Lusi...
+
+Ami jani, ei somoy ta tomar jonne onek joruri.
+Family theke pressure dicche khub ar amio eysomoy boro bhul korechi, kichu decision tomar mathay Bhrom anar moto pressure aste pare.
+
+Kintu ami ekta kotha bolte chai — ami tomar pashe achi. Chirokal.
+
+Ami kono promise dicchi na jeta pura duniya bodle felbe,
+kintu ami promise dichhi ami tomar jonne lorte parbo, tomar kotha shunte parbo,
+tomar pashe thakte parbo — ar gopon na, but proudly.
+
+Tumi jeno mone rakho — biye mane kono bojha na, biye mane bhalobasha.
+Tumi jeno bhalobashar jonno biye koro, na jeta samaj chay.
+
+Ami chai tumi sei bhalobasha tao amar moddhe dekho.
+
+Tumi akai na. Ami achi, tomar pashe,  tomay niye shopno dekhte,
+tomay niye bhalobashar ekta notun odhyai suru korte.
+
+So jodi tomar kache ekta chance thake bhalobashake beche newar —
+tahole jeno ami sei byekti hoy.
+
+— Tomar Jahir, So Sorry na bujhar jonno tomake.`;
+
+    let i = 0;
+    const speed = 50;
+    const msgDiv = document.getElementById('message');
+
+    function begin() {
+      document.getElementById('start-screen').style.display = 'none';
+      document.getElementById('main-container').classList.add('visible');
+      const bgm = document.getElementById('bgm');
+      bgm.muted = false;
+      bgm.play();
+      typeWriter();
+      initDust();
+    }
+
+    function typeWriter() {
+      if (i < text.length) {
+        msgDiv.innerHTML += text.charAt(i);
+        i++;
+        setTimeout(typeWriter, speed);
+      }
+    }
+
+    function initDust() {
+      const canvas = document.getElementById('dust');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      const stars = [];
+      for (let i = 0; i < 100; i++) {
+        stars.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          radius: Math.random() * 1.5,
+          alpha: Math.random(),
+          dx: (Math.random() - 0.5) * 0.5,
+          dy: (Math.random() - 0.5) * 0.5,
+        });
+      }
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (let star of stars) {
+          ctx.beginPath();
+          ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255, 255, 255, ${star.alpha})`;
+          ctx.fill();
+          star.x += star.dx;
+          star.y += star.dy;
+          if (star.x < 0 || star.x > canvas.width) star.dx *= -1;
+          if (star.y < 0 || star.y > canvas.height) star.dy *= -1;
+        }
+        requestAnimationFrame(animate);
+      }
+      animate();
+    }
+  </script>
+</body>
+</html>
